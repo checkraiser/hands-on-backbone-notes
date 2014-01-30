@@ -13,60 +13,60 @@ Adding add
   - Add a paragraph tag inside of the div with a button inside of it with a
     class of 'add-note'
   - Make the button say 'Add Note'
-  - ```
-    <div class="add-actions">
-      <button class="add-note">Add Note</button>
-    </div>
-    ```
+
+        <div class="add-actions">
+          <button class="add-note">Add Note</button>
+        </div>
+
 - Open the notes.css.scss file
   - Add styles for add-actions
-  - ```
-    .note, .add-actions {
-      width: 225px;
-      heigth: 225px;
-      margin: 20px;
-      float: left;
-      padding: 10px;
 
-      position: relative;
-    }
-    ```
+        .note, .add-actions {
+          width: 225px;
+          heigth: 225px;
+          margin: 20px;
+          float: left;
+          padding: 10px;
+
+          position: relative;
+        }
+
   - Add styles for the 'p' tag inside of the add-actions div to place the button
     where we want it
-  - ```
-    .add-actions {
-      p {
-        position: absolute;
-        top: 50%;
-        height: 3em;
-        margin-top: -1.5em;
-      }
-    }
-    ```
+
+        .add-actions {
+          p {
+            position: absolute;
+            top: 50%;
+            height: 3em;
+            margin-top: -1.5em;
+          }
+        }
+
 - Open the index.jst.eco template
   - Remove the add-actions div
 - Create a new template called add\_ations.jst.eco
   - Add the 'p' tag you removed from the index.jst.eco file into this new template
-  - ```
-    <p>
-      <button class="add-note">Add Note</button>
-    </p>
-    ```
+
+        <p>
+          <button class="add-note">Add Note</button>
+        </p>
+
 - In the Notes Backbone view add an initialize method
   - In the initialize method initialize an instance of the AddActions Backbone view
-  - ```
-    initialize: ->
-      @addActions = new App.Views.AddActions(collection: @collection)
-    ```
+
+        initialize: ->
+          @addActions = new App.Views.AddActions(collection: @collection)
+
   - In the `render` method append this `addActions` view to the view's el
     attribute
-  - ```
-    render: =>
-      @$el.html(@template())
-      @collection.forEach(@renderNote)
-      @$el.append(@addActions.render().el)
-      this
-    ```
+
+        render: =>
+          @$el.html(@template())
+          @collection.forEach(@renderNote)
+          @$el.append(@addActions.render().el)
+          this
+
 - Now we need to create the AddActions Backbone view we created an instance of in the
   previous step
   - Connect the view to the add\_actions.jst.eco template
@@ -74,23 +74,23 @@ Adding add
   - Bind the click event to a method called `addNote`
     - In the `addNote` method call the add method on the `@collection` object
     - Make sure to send in an empy opject to the add method (must pass an empty object to the add method or it's noop)
-  - ```
-    class App.Views.AddActions extends Backbone.View
-      template: JST['notes/add-actions']
 
-      className: 'add-actions'
+        class App.Views.AddActions extends Backbone.View
+          template: JST['notes/add-actions']
 
-      events:
-        'click .add-note': 'addNote'
+          className: 'add-actions'
 
-      render: ->
-        @$el.html(@template())
-        this
+          events:
+            'click .add-note': 'addNote'
 
-      addNote: ->
-        @collection.add({})
-        false
-    ```
+          render: ->
+            @$el.html(@template())
+            this
+
+          addNote: ->
+            @collection.add({})
+            false
+
 
 Rendering the new Note
 --
@@ -99,11 +99,11 @@ Rendering the new Note
   for an event called `add` using Backbone's `listenTo` method
   - Set the render method as the `add` events handler
   - Change the render method to use the fat arrow
-  - ```
-    initialize: ->
-        @addActions = new App.Views.AddActions(collection: @collection)
-        @listenTo(@collection, 'add', @renderNote)
-    ```
+
+        initialize: ->
+            @addActions = new App.Views.AddActions(collection: @collection)
+            @listenTo(@collection, 'add', @renderNote)
+
 - In the show.jst.eco templateadd placeholders to the inputs to enhance user
   experience
 
@@ -111,19 +111,19 @@ Rendering the new Note
   avoid this by only rendering the newly added note
   - Because we already have a method to render a single note in our Notes Backbone view we can use that as our call back to the `add` event and avoid the hastle of rerendinering the entire list of Notes
   - Remeber to change the `renderNote` to use fat arrow
-  - ```
-    initialize: ->
-        @addActions = new App.Views.AddActions(collection: @collection)
-        @listenTo(@collection, 'add', @renderNote)
-    ```
+
+        initialize: ->
+            @addActions = new App.Views.AddActions(collection: @collection)
+            @listenTo(@collection, 'add', @renderNote)
+
 
 - Add an additional event handler on our `@collection` object in the Notes Backbone model's `initializer` method to handle the `reset` event
   - This event handler will call the `render` method
-  - ```
-    initialize: ->
-        @addActions = new App.Views.AddActions(collection: @collection)
-        @listenTo(@collection, 'reset', @render)
-        @listenTo(@collection, 'add', @renderNote)
-    ```
+
+        initialize: ->
+            @addActions = new App.Views.AddActions(collection: @collection)
+            @listenTo(@collection, 'reset', @render)
+            @listenTo(@collection, 'add', @renderNote)
+
 
 - Commit!

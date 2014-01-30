@@ -6,37 +6,37 @@ Advanced JSON Input and Output
 - Add the gem active\_record\_serializers to your Gemfile and bundle
 - We need to disable root element
   - Add a new initializer with the follow code inside
-  - ```
-    ActiveModel::Serializer.root = false
-    ActiveModel::ArraySerializer.root = false
-    ```
+
+        ActiveModel::Serializer.root = false
+        ActiveModel::ArraySerializer.root = false
+
 - Create a new serializer title note_serializer
 - Add the id, title, updated attributes in the new serializer
 - Include the body as a `has_one` make sure to flag this as polymorphic
   - This tells rails to include the attributes under a parent attribute derived
     from the class name
 - Create a helper method in application_helper.rb called `serialize`
-- ```
-  def serialize(models)
-    ActiveModel::ArraySerializer.new(models).to_json
-  end
-  ```
+
+        def serialize(models)
+          ActiveModel::ArraySerializer.new(models).to_json
+        end
+
 - In index.html.erb change the code that is serializing the objects to a call the new serialize method
-- ```
-  <script>
-    ScratchPad.notesJson = <%= raw serialize(notes) %>
-  </script>
-  ```
+
+        <script>
+          ScratchPad.notesJson = <%= raw serialize(notes) %>
+        </script>
+
 - Now we need to change the `parse` method in our Backbone Note model
   - Translate the content attribute from it's new location under the sticky_note
     attribute from our Rails app
   - We can remove the lines that delete the body_type and body_id attributes
-  - ```
-    parse: (data) ->
-      data.content = data.body.sticky_note.content
-      delete data.body
-      data
-    ```
+
+        parse: (data) ->
+          data.content = data.body.sticky_note.content
+          delete data.body
+          data
+
 
 Consistency
 --
@@ -47,39 +47,39 @@ make sure our Rails app can accept data in the same format.
 - First let's tell Backbone how to translate the JSON data back to the format it received the data
   - In Backbone Note model override the function `toJSON`
   - This method will just return a JSON object
-  - ```
-    toJSON: ->
-      {
-        title: @get('title')
-        body:
-          type: 'sticky_note'
-          sticky_note:
-            content: @get('content')
-      }
-    ```
+
+        toJSON: ->
+          {
+            title: @get('title')
+            body:
+              type: 'sticky_note'
+              sticky_note:
+                content: @get('content')
+          }
+
 - Now we need to tell our Rails app how to accept this data
 - First create a new file at app/models/note_form.rb
   - Create a class that's initializer takes a note and params
-  - ```
-    class NoteForm < Struct.new(:note, :params)
-      def save
-        note.body ||= StickyNote.new
-        note.attributes = note_attributes
-        note.body.attributes = body_attributes
-        note.save
-      end
 
-      private
+        class NoteForm < Struct.new(:note, :params)
+          def save
+            note.body ||= StickyNote.new
+            note.attributes = note_attributes
+            note.body.attributes = body_attributes
+            note.save
+          end
 
-      def note_attributes
-        params.permit(:title)
-      end
+          private
 
-      def body_attributes
-        params.require(:body).require(:sticky_note).permit(:content)
-      end
-    end
-    ```
+          def note_attributes
+            params.permit(:title)
+          end
+
+          def body_attributes
+            params.require(:body).require(:sticky_note).permit(:content)
+          end
+        end
+
 
 Making it save
 --
@@ -95,15 +95,15 @@ Making it save
   `has_one` doesn't take `touch` as an option it only works with `belongs_to`
   - To fix this we'll add an `after_save` hook on `StickyNote`
   - In the afer_save hook call the touch method on the StickyNote's Note
-  - ```
-    after_save :touch_note
 
-    private
+        after_save :touch_note
 
-    def touch_note
-      note.touch
-    end
-    ```
+        private
+
+        def touch_note
+          note.touch
+        end
+
   - In order to avoid making unnecessary queries add an `inverse_of` option to the `belongs_to` in `ScratchPadItem`
 
 Creating and Destroying

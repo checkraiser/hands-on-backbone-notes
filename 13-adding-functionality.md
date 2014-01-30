@@ -15,32 +15,32 @@ Setting up the JSON
     - We take advantage of the new `reversible` method in Rails 4
     - We also use the `dir.up` and `dir.down` methods so we only have to use the
       `change` method in our migration
-    - ```
-      def change
-        create_table :sticky_notes do |t|
-          t.string :content
 
-          t.timestamps
-        end
+            def change
+              create_table :sticky_notes do |t|
+                t.string :content
 
-        change_table :notes do |t|
-          t.belongs_to :body, polymorphic: true
-        end
+                t.timestamps
+              end
 
-        reversible do |dir|
-          dir.down { add_column :notes, :content, :string }
+              change_table :notes do |t|
+                t.belongs_to :body, polymorphic: true
+              end
 
-          Note.reset_column_information
-          Note.all.each do |note|
-            dir.up { note.body = StickyNote.create(content: note.send(:read_attribute, :content)) }
-            dir.down { note.send(:write_attribute, :content, note.body.content) }
-            note.save!
-          end
+              reversible do |dir|
+                dir.down { add_column :notes, :content, :string }
 
-          dir.up { remove_column :notes, :content }
-        end
-      end
-      ```
+                Note.reset_column_information
+                Note.all.each do |note|
+                  dir.up { note.body = StickyNote.create(content: note.send(:read_attribute, :content)) }
+                  dir.down { note.send(:write_attribute, :content, note.body.content) }
+                  note.save!
+                end
+
+                dir.up { remove_column :notes, :content }
+              end
+            end
+
 - Add a `content` method to Note Rails model which delegates to our new polymorphic
   association `body`
 - To keep our application working we'll need to update our index.html.erb file
@@ -56,14 +56,14 @@ Handling the association on the client
   handle the new API structure
 - We need to change the JSON to include the `body`
   - We do this by adding a `parse` method to the Backbone Note model
-  - ```
-    parse: (data) ->
-      data.content = data.body.content
-      delete data.body
-      delete data.body_type
-      delete data.body_id
-      data
-    ```
+
+        parse: (data) ->
+          data.content = data.body.content
+          delete data.body
+          delete data.body_type
+          delete data.body_id
+          data
+
   - Next we need to tell Backbone to call our new parse method
     - When we initialize our `ScratchPad` app we need to tell the notes collection
       to call parse `new @Collections.Notes(@notesJson, parse: true)`

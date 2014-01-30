@@ -14,54 +14,54 @@ routes with /api, but for now let's rely on the fact that we only need index,
 update, and create, none of which conflict with Backbone.
 
 - In the routes file add a call to resources
-- ```
-  resources :notes, only: [:index, :create, :update, :destroy]
-  ```
+
+        resources :notes, only: [:index, :create, :update, :destroy]
+
 - In order to keep Rails and Backbone from conflicting we also want to route any
   request to our notes#index action
-- ```
-  get '*any' => 'notes#index'
-  ```
+
+        get '*any' => 'notes#index'
+
 - Next we want to build out our Notes Rails controller to connect with our
   Backbone application
-- ```
-  class NotesController < ApplicationController
-    helper_method :notes, :note
-    respond_to :json, only: [:index, :create, :update, :destroy]
-    respond_to :html, only: [:index]
 
-    def index
-      respond_with notes
-    end
+        class NotesController < ApplicationController
+          helper_method :notes, :note
+          respond_to :json, only: [:index, :create, :update, :destroy]
+          respond_to :html, only: [:index]
 
-    def create
-      note = Note.create(note_params)
-      respond_with note
-    end
+          def index
+            respond_with notes
+          end
 
-    def update
-      note.update_attributes(note_params)
-      respond_with note
-    end
+          def create
+            note = Note.create(note_params)
+            respond_with note
+          end
 
-    def destroy
-      respond_with note.destroy
-    end
+          def update
+            note.update_attributes(note_params)
+            respond_with note
+          end
 
-    private
+          def destroy
+            respond_with note.destroy
+          end
 
-    def note_params
-      params.permit(:title, :content)
-    end
+          private
 
-    def notes
-      @_notes ||= Note.all
-    end
+          def note_params
+            params.permit(:title, :content)
+          end
 
-    def note
-      @_note ||= notes.find(params[:id])
-    end
-  end
-  ```
+          def notes
+            @_notes ||= Note.all
+          end
+
+          def note
+            @_note ||= notes.find(params[:id])
+          end
+        end
+
 
 - Commit!

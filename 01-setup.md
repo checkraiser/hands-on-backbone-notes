@@ -2,7 +2,7 @@ You will code along with Sean as he builds the application. Do what he does, pau
 
 You should have access to a [GitHub repo for the workshop](https://github.com/thoughtbot/hands-on-backbone-js-on-rails). This repository is where you'll do your work for the app you'll build with Sean. Fork this private repo into your own Github Account.  If you don't know how to do this, there are [instructions on GitHub](https://help.github.com/articles/fork-a-repo)
 
-By working in your own fork of this repository we'll be able to see the code you're writing, answer questions, and even comment on it. 
+By working in your own fork of this repository we'll be able to see the code you're writing, answer questions, and even comment on it.
 
 See the [README on GitHub](https://github.com/thoughtbot/hands-on-backbone-js-on-rails/blob/master/README.md) for more information.
 
@@ -34,20 +34,18 @@ Install Backbone
 - Replace underscore with lodash in the app/assets/javascripts/application.js
 - For simplicity add `window.App = window.ScratchPad` to
   app/assets/javascripts/scratch\_pad.js.coffee
-  - ```
-    window.ScratchPad =
-      Models: {}
-      Collections: {}
-      Views: {}
-      Routers: {}
-      initialize: ->
-        alert('hello from backbone!');
 
-    window.App = window.ScratchPad
+        window.ScratchPad =
+          Models: {}
+          Collections: {}
+          Views: {}
+          Routers: {}
+          initialize: ->
+            alert('hello from backbone!');
+                window.App = window.ScratchPad
+                $(document).ready ->
+          ScratchPad.initialize()
 
-    $(document).ready ->
-      ScratchPad.initialize()
-    ```
 
 Verify setup
 --
